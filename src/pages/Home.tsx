@@ -1,154 +1,281 @@
 import React from 'react';
-import { motion, useScroll, useTransform } from 'framer-motion';
-import { ArrowRight, Activity, ShieldCheck, HeartPulse, Stethoscope } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { motion } from 'framer-motion';
+import { ArrowRight, Play, CheckCircle, Activity, Star, Users, Calendar, Award } from 'lucide-react';
+import { NavLink } from 'react-router-dom';
 
 const Home: React.FC = () => {
-  const { scrollYProgress } = useScroll();
-  const y = useTransform(scrollYProgress, [0, 1], ['0%', '30%']);
-
   return (
-    <div className="relative">
+    <div className="overflow-hidden">
       {/* Hero Section */}
-      <section className="relative min-h-[90vh] flex items-center px-6 overflow-hidden">
-        <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-12 items-center w-full relative z-10">
+      <section className="relative min-h-[90vh] flex items-center bg-primary text-white">
+        <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-20"></div>
+        <div className="max-w-7xl mx-auto section-padding grid lg:grid-cols-2 gap-16 items-center relative z-10">
           <motion.div
-            initial={{ opacity: 0, x: -50 }}
+            initial={{ opacity: 0, x: -30 }}
             animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8, type: "spring", bounce: 0.4 }}
+            transition={{ duration: 0.8 }}
           >
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-100 border border-cyan-200 text-cyan-800 text-xs font-bold uppercase tracking-wider mb-6">
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-cyan-500"></span>
-              </span>
-              Accepting New Patients
+            <div className="flex items-center gap-2 mb-6 text-accent font-bold tracking-[0.2em] uppercase text-sm">
+              <span className="w-10 h-[2px] bg-accent"></span>
+              Feel Better, Move Freely, Live Fully
             </div>
-            <h1 className="text-5xl md:text-7xl font-extrabold text-slate-900 leading-[1.1] mb-6 tracking-tight">
-              Reclaim Your <br/>
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-600 to-emerald-500">Mobility & Life.</span>
+            <h1 className="text-5xl md:text-7xl font-extrabold leading-[1.1] mb-8 text-white">
+              Chiropractic Care That Brings You <br/>
+              <span className="text-accent italic">Back to Life</span>
             </h1>
-            <p className="text-lg text-slate-600 mb-10 max-w-xl leading-relaxed font-light">
-              Advanced physiotherapy and holistic rehabilitation tailored specifically to your body's needs. We don't just treat symptoms; we heal the source.
+            <p className="text-lg text-emerald-50/80 mb-10 max-w-xl leading-relaxed">
+              Our expert team focuses on personalized treatments that target the root cause of discomfort helping you move better, feel stronger, and reach your goals.
             </p>
-            <div className="flex flex-wrap gap-4">
-              <Link to="/book" className="px-8 py-4 bg-cyan-600 hover:bg-cyan-700 text-white font-bold rounded-full transition-all shadow-[0_0_20px_rgba(8,145,178,0.3)] flex items-center gap-2 hover:-translate-y-1">
-                Book Consultation <ArrowRight className="w-5 h-5" />
-              </Link>
-              <Link to="/patient-portal" className="px-8 py-4 bg-white border border-slate-200 hover:border-cyan-200 text-slate-700 hover:text-cyan-600 font-bold rounded-full transition-all flex items-center gap-2 shadow-sm">
-                Patient Portal
-              </Link>
+            <div className="flex flex-wrap gap-6 items-center">
+              <NavLink to="/book" className="btn-primary">
+                BOOK AN APPOINTMENT <ArrowRight className="w-5 h-5" />
+              </NavLink>
+              <button className="flex items-center gap-3 text-white font-bold hover:text-accent transition-colors group">
+                <div className="w-14 h-14 rounded-full border-2 border-white/30 flex items-center justify-center group-hover:border-accent group-hover:bg-accent group-hover:text-primary transition-all">
+                  <Play className="w-5 h-5 fill-current ml-1" />
+                </div>
+                PLAY VIDEO
+              </button>
+            </div>
+            
+            <div className="mt-16 flex gap-12 border-t border-white/10 pt-8">
+              <div>
+                <span className="text-3xl font-extrabold text-accent block">10K+</span>
+                <span className="text-xs font-bold uppercase tracking-widest text-emerald-50/60">Patients Healed</span>
+              </div>
+              <div>
+                <span className="text-3xl font-extrabold text-accent block">99%</span>
+                <span className="text-xs font-bold uppercase tracking-widest text-emerald-50/60">Success Rate</span>
+              </div>
+              <div>
+                <span className="text-3xl font-extrabold text-accent block">12+</span>
+                <span className="text-xs font-bold uppercase tracking-widest text-emerald-50/60">Expert Doctors</span>
+              </div>
             </div>
           </motion.div>
-          
+
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            style={{ y }}
-            className="relative hidden lg:block"
+            transition={{ duration: 1 }}
+            className="relative"
           >
-            <div className="aspect-[4/3] rounded-[2rem] overflow-hidden shadow-2xl relative">
-              {/* Note: Replacing with a generic rehab/physio image since no specific video was provided */}
-              <img src="https://images.unsplash.com/photo-1576091160550-2173ff9e5ee5?q=80&w=2069&auto=format&fit=crop" alt="Physiotherapy session" className="w-full h-full object-cover" />
-              
-              {/* Floating glass badges */}
-              <motion.div 
-                animate={{ y: [0, -10, 0] }}
-                transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
-                className="absolute top-10 -left-10 glass-panel p-4 rounded-2xl flex items-center gap-4"
-              >
-                <div className="bg-emerald-100 p-3 rounded-full">
-                  <ShieldCheck className="w-6 h-6 text-emerald-600" />
-                </div>
-                <div>
-                  <p className="text-sm font-bold text-slate-800">Certified Experts</p>
-                  <p className="text-xs text-slate-500">10+ Years Experience</p>
-                </div>
-              </motion.div>
-
-              <motion.div 
-                animate={{ y: [0, 15, 0] }}
-                transition={{ repeat: Infinity, duration: 5, ease: "easeInOut", delay: 1 }}
-                className="absolute bottom-10 -right-10 glass-panel p-4 rounded-2xl flex items-center gap-4"
-              >
-                <div className="bg-cyan-100 p-3 rounded-full">
-                  <Activity className="w-6 h-6 text-cyan-600" />
-                </div>
-                <div>
-                  <p className="text-sm font-bold text-slate-800">98% Success Rate</p>
-                  <p className="text-xs text-slate-500">In Pain Recovery</p>
-                </div>
-              </motion.div>
+            <div className="relative rounded-[4rem] overflow-hidden border-8 border-white/10 shadow-2xl">
+              <img 
+                src="https://images.unsplash.com/photo-1576091160550-2173dba999ef?q=80&w=2070&auto=format&fit=crop" 
+                alt="Physiotherapy session" 
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-primary/20 mix-blend-overlay"></div>
+            </div>
+            {/* Floating Special Offer Badge */}
+            <div className="absolute -top-10 -right-10 bg-accent text-primary w-40 h-40 rounded-full flex flex-col items-center justify-center text-center p-4 border-8 border-white shadow-2xl rotate-12">
+               <span className="text-[10px] font-black tracking-widest uppercase">Special</span>
+               <span className="text-3xl font-black leading-none">OFFER</span>
             </div>
           </motion.div>
         </div>
       </section>
 
-      {/* Services Grid */}
-      <section className="py-32 px-6 bg-white relative z-20">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-20">
-            <h2 className="text-4xl md:text-5xl font-bold text-slate-900 mb-6">Our Core Specialties</h2>
-            <p className="text-slate-500 max-w-2xl mx-auto text-lg">Comprehensive care designed to restore function, alleviate pain, and prevent future injuries.</p>
+      {/* Science-Back Treatment Section */}
+      <section className="section-padding bg-white">
+        <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-20 items-center">
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-4 pt-12">
+               <img src="https://images.unsplash.com/photo-1597452485669-2c7bb5fef90d?q=80&w=1974&auto=format&fit=crop" className="rounded-3xl shadow-lg w-full h-64 object-cover" />
+               <img src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?q=80&w=2070&auto=format&fit=crop" className="rounded-3xl shadow-lg w-full h-80 object-cover" />
+            </div>
+            <div className="space-y-4">
+               <img src="https://images.unsplash.com/photo-1586773860418-d3b97950569e?q=80&w=2073&auto=format&fit=crop" className="rounded-3xl shadow-lg w-full h-80 object-cover" />
+               <img src="https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?q=80&w=2053&auto=format&fit=crop" className="rounded-3xl shadow-lg w-full h-64 object-cover" />
+            </div>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8">
+          <div>
+            <div className="flex items-center gap-2 mb-4 text-emerald-600 font-bold tracking-widest uppercase text-xs">
+              <span className="w-10 h-[2px] bg-emerald-600"></span> About Us
+            </div>
+            <h2 className="text-4xl md:text-5xl font-extrabold mb-8 leading-tight">
+              Science-Back Treatment Personalized Recovery Plans Results That Last
+            </h2>
+            <p className="text-slate-600 text-lg mb-8 leading-relaxed">
+              At our clinic, believe recovery is more than just physical it's emotional, personal transformative. That's why we take the time to understand your story, your pain, and your goals expert.
+            </p>
+            <ul className="space-y-4 mb-10">
+              {['Restoring Movement', 'Rebuilding Lives', 'We Don\'t Just Treat Injuries'].map((item) => (
+                <li key={item} className="flex items-center gap-3 font-bold text-primary">
+                  <CheckCircle className="w-6 h-6 text-accent" />
+                  {item}
+                </li>
+              ))}
+            </ul>
+            <NavLink to="/about" className="btn-primary inline-flex">
+              SCHEDULE A SESSION
+            </NavLink>
+          </div>
+        </div>
+      </section>
+
+      {/* Therapy Categories */}
+      <section className="section-padding bg-emerald-50/50">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <div className="flex justify-center items-center gap-2 mb-4 text-emerald-600 font-bold tracking-widest uppercase text-xs">
+              <span className="w-10 h-[2px] bg-emerald-600"></span> Our Expertise
+            </div>
+            <h2 className="text-4xl md:text-5xl font-extrabold text-primary">Therapy That Adapts To You, Not The Other Way Around</h2>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
             {[
-              { icon: HeartPulse, title: 'Sports Rehabilitation', desc: 'Accelerated recovery programs for athletes to return to peak performance safely.', color: 'text-rose-500', bg: 'bg-rose-50', border: 'border-rose-100' },
-              { icon: Activity, title: 'Orthopedic Physio', desc: 'Treatment for joint, muscle, and ligament issues, including post-operative care.', color: 'text-cyan-600', bg: 'bg-cyan-50', border: 'border-cyan-100' },
-              { icon: Stethoscope, title: 'Neurological Rehab', desc: 'Specialized therapy for stroke, Parkinson\'s, and other neurological conditions.', color: 'text-indigo-500', bg: 'bg-indigo-50', border: 'border-indigo-100' },
-            ].map((service, idx) => (
+              { title: 'Massage, Chiropractic', img: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?q=80&w=1920' },
+              { title: 'Manual Therapy', img: 'https://images.unsplash.com/photo-1519823551278-64ac92734fb1?q=80&w=1920' },
+              { title: 'Neurological Rehab', img: 'https://images.unsplash.com/photo-1576765608535-5f04d1e3f289?q=80&w=1920' },
+              { title: 'Sports Medicine', img: 'https://images.unsplash.com/photo-1597452485669-2c7bb5fef90d?q=80&w=1920' },
+            ].map((srv, idx) => (
               <motion.div
                 key={idx}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-100px" }}
-                transition={{ duration: 0.5, delay: idx * 0.1 }}
-                whileHover={{ y: -5 }}
-                className={`p-8 rounded-3xl border ${service.border} bg-white shadow-lg shadow-slate-200/50 hover:shadow-xl transition-all cursor-pointer`}
+                whileHover={{ y: -10 }}
+                className="bg-white rounded-[2.5rem] overflow-hidden shadow-xl border border-slate-100 group"
               >
-                <div className={`w-16 h-16 rounded-2xl ${service.bg} flex items-center justify-center mb-6`}>
-                  <service.icon className={`w-8 h-8 ${service.color}`} />
+                <div className="h-64 overflow-hidden relative">
+                  <img src={srv.img} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                  <div className="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 transition-opacity"></div>
                 </div>
-                <h3 className="text-2xl font-bold text-slate-800 mb-4">{service.title}</h3>
-                <p className="text-slate-600 leading-relaxed">{service.desc}</p>
+                <div className="p-8">
+                  <h3 className="text-xl font-bold mb-4">{srv.title}</h3>
+                  <p className="text-slate-500 text-sm mb-6 leading-relaxed">Providing high-quality care that focuses on your specific needs.</p>
+                  <NavLink to="/services" className="text-primary font-bold flex items-center gap-2 group-hover:text-accent transition-colors">
+                    READ MORE <ArrowRight className="w-4 h-4" />
+                  </NavLink>
+                </div>
               </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Patient Portal Teaser */}
-      <section className="py-24 px-6 bg-slate-900 text-white relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-cyan-600/20 blur-[100px] rounded-full"></div>
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-12 relative z-10">
-          <div className="max-w-2xl">
-            <h2 className="text-4xl md:text-5xl font-bold mb-6">Your Digital Recovery Companion</h2>
-            <p className="text-slate-400 text-lg mb-8 leading-relaxed">
-              Log into our state-of-the-art Patient Portal to access your track records, view initial assessments, sign digital consent forms, and follow your prescribed exercise routines from home.
-            </p>
-            <Link to="/patient-portal" className="inline-flex items-center gap-2 px-8 py-4 bg-white text-slate-900 font-bold rounded-full hover:bg-cyan-50 transition-colors">
-              Access Portal Now <ArrowRight className="w-5 h-5" />
-            </Link>
+      {/* Guide Section */}
+      <section className="section-padding bg-primary text-white relative">
+        <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-20 items-center">
+          <div className="relative rounded-[3rem] overflow-hidden">
+             <img src="https://images.unsplash.com/photo-1519824141121-9974545783d3?q=80&w=2071&auto=format&fit=crop" className="w-full h-[600px] object-cover" />
+             <div className="absolute inset-0 bg-primary/30 mix-blend-multiply"></div>
           </div>
-          <div className="w-full md:w-1/3 glass-panel border-slate-700 bg-slate-800/50 p-8 rounded-3xl">
-             <ul className="space-y-6">
-                <li className="flex items-center gap-4">
-                  <div className="w-10 h-10 rounded-full bg-cyan-500/20 flex items-center justify-center text-cyan-400">1</div>
-                  <span className="font-semibold">Track your progress</span>
-                </li>
-                <li className="flex items-center gap-4">
-                  <div className="w-10 h-10 rounded-full bg-emerald-500/20 flex items-center justify-center text-emerald-400">2</div>
-                  <span className="font-semibold">View prescribed exercises</span>
-                </li>
-                <li className="flex items-center gap-4">
-                  <div className="w-10 h-10 rounded-full bg-amber-500/20 flex items-center justify-center text-amber-400">3</div>
-                  <span className="font-semibold">Digital consent forms</span>
-                </li>
-             </ul>
+          <div>
+            <div className="flex items-center gap-2 mb-4 text-accent font-bold tracking-widest uppercase text-xs">
+              <span className="w-10 h-[2px] bg-accent"></span> Why Healex
+            </div>
+            <h2 className="text-4xl md:text-5xl font-extrabold mb-8">Personalized Care & Discovery We Guide Every Step</h2>
+            <div className="space-y-8">
+              {[
+                { title: 'Personalized Treatment Plan', icon: Award },
+                { title: 'Qualified & Licensed Experts', icon: Users },
+                { title: 'Modern Facilities & Equipments', icon: Activity },
+                { title: 'Affordable Pricing Models', icon: Calendar },
+              ].map((item, idx) => (
+                <div key={idx} className="flex gap-6 items-start">
+                  <div className="w-14 h-14 bg-accent text-primary rounded-2xl flex items-center justify-center shrink-0 shadow-lg shadow-yellow-500/10">
+                    <item.icon className="w-7 h-7" />
+                  </div>
+                  <div>
+                    <h4 className="text-xl font-bold mb-2">{item.title}</h4>
+                    <p className="text-emerald-50/60 leading-relaxed">Ensuring every step of your recovery is handled with utmost professional care.</p>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
+      </section>
+
+      {/* Team Section */}
+      <section className="section-padding bg-white">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex justify-between items-end mb-16">
+            <div>
+              <div className="flex items-center gap-2 mb-4 text-emerald-600 font-bold tracking-widest uppercase text-xs">
+                <span className="w-10 h-[2px] bg-emerald-600"></span> Our Team
+              </div>
+              <h2 className="text-4xl md:text-5xl font-extrabold">Your Healing, Powered By People Who Care</h2>
+            </div>
+            <div className="flex gap-4">
+              <button className="w-12 h-12 rounded-full border border-slate-200 flex items-center justify-center hover:bg-primary hover:text-white transition-all"><ArrowRight className="w-5 h-5 rotate-180" /></button>
+              <button className="w-12 h-12 rounded-full border border-slate-200 bg-accent text-primary flex items-center justify-center hover:bg-primary hover:text-white transition-all"><ArrowRight className="w-5 h-5" /></button>
+            </div>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {[
+              { name: 'Joshua Jones', role: 'Lead Massage Therapist', img: 'https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?q=80&w=2070' },
+              { name: 'Dennis Callis', role: 'Postnatal Expert', img: 'https://images.unsplash.com/photo-1537368910025-700350fe46c7?q=80&w=2070' },
+              { name: 'Kenneth Allen', role: 'Recover Therapist', img: 'https://images.unsplash.com/photo-1622253692010-333f2da6031d?q=80&w=2070' },
+              { name: 'Alex Buckmaster', role: 'Holistic Massage', img: 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?q=80&w=2070' },
+            ].map((member, idx) => (
+              <div key={idx} className="group">
+                <div className="relative h-[400px] rounded-[3rem] overflow-hidden mb-6">
+                  <img src={member.img} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-primary/90 to-transparent translate-y-full group-hover:translate-y-0 transition-transform duration-500 flex flex-col justify-end p-8">
+                    <p className="text-accent font-bold uppercase tracking-widest text-[10px] mb-2">{member.role}</p>
+                    <h4 className="text-white text-2xl font-bold">{member.name}</h4>
+                  </div>
+                </div>
+                <div className="text-center group-hover:hidden transition-all">
+                  <h4 className="text-xl font-bold text-primary">{member.name}</h4>
+                  <p className="text-slate-500 text-sm font-medium">{member.role}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Testimonials */}
+      <section className="section-padding bg-emerald-50/30">
+        <div className="max-w-7xl mx-auto bg-white rounded-[4rem] p-12 md:p-20 shadow-2xl flex flex-col lg:flex-row gap-16 items-center">
+          <div className="w-full lg:w-1/3">
+             <div className="relative rounded-[3rem] overflow-hidden aspect-square">
+               <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=1974&auto=format&fit=crop" className="w-full h-full object-cover" />
+             </div>
+          </div>
+          <div className="flex-grow">
+            <div className="flex gap-1 mb-6">
+              {[...Array(5)].map((_, i) => <Star key={i} className="w-6 h-6 text-accent fill-accent" />)}
+            </div>
+            <p className="text-2xl md:text-3xl font-bold text-primary italic leading-relaxed mb-10">
+              "The team at Healex provided exceptional care. After my sports injury, I thought I'd never run again, but their recovery plan worked wonders. I'm now back on the field stronger than ever!"
+            </p>
+            <div className="flex items-center gap-4">
+              <div className="w-14 h-14 rounded-full bg-slate-200 overflow-hidden">
+                <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=1974" className="w-full h-full object-cover" />
+              </div>
+              <div>
+                <h5 className="text-lg font-extrabold text-primary">Mark Sullivan</h5>
+                <p className="text-slate-500 font-bold uppercase tracking-widest text-[10px]">Professional Athlete</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Final CTA */}
+      <section className="section-padding pb-0 bg-white">
+        <div className="max-w-7xl mx-auto bg-primary rounded-[4rem] px-12 py-20 flex flex-col lg:flex-row items-center justify-between gap-12 text-white relative overflow-hidden">
+          <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-10"></div>
+          <div className="relative z-10 max-w-2xl">
+            <h2 className="text-4xl md:text-6xl font-extrabold mb-6">Ready To Take The First Step Toward A Pain-Free Life?</h2>
+            <p className="text-emerald-50/70 text-lg">Don't let pain hold you back any longer. Join 10,000+ happy patients today.</p>
+          </div>
+          <div className="relative z-10">
+            <div className="flex bg-white rounded-full p-2 w-full md:w-[450px]">
+              <input type="email" placeholder="Your Email Address" className="flex-grow px-6 py-4 bg-transparent text-primary font-bold focus:outline-none" />
+              <button className="bg-accent text-primary px-8 py-4 rounded-full font-black tracking-widest uppercase text-sm hover:bg-white transition-colors shadow-lg">SUBSCRIBE</button>
+            </div>
+          </div>
+        </div>
+        
+        {/* Visual overlap from image */}
+        <div className="max-w-7xl mx-auto h-32 bg-white"></div>
       </section>
     </div>
   );

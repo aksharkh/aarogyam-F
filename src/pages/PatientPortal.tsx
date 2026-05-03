@@ -1,40 +1,105 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FileText, ClipboardList, ActivitySquare, PenTool, CheckCircle, Video } from 'lucide-react';
+import { ClipboardList, Activity, PenTool, CheckCircle, Video, User, MapPin, Calendar, Bell } from 'lucide-react';
 
 const PatientPortal: React.FC = () => {
   const [activeTab, setActiveTab] = useState('trackRecord');
+  const [patient, setPatient] = useState<any>(null);
+  const [trackRecords, setTrackRecords] = useState<any[]>([]);
+  const [assessments, setAssessments] = useState<any[]>([]);
+  const [exercises, setExercises] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const PATIENT_ID = 1;
+
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        const [patientRes, recordsRes, assessRes, exRes] = await Promise.all([
+          fetch(`http://localhost:8080/api/patients/${PATIENT_ID}`),
+          fetch(`http://localhost:8080/api/patients/${PATIENT_ID}/track-records`),
+          fetch(`http://localhost:8080/api/patients/${PATIENT_ID}/assessments`),
+          fetch(`http://localhost:8080/api/patients/${PATIENT_ID}/exercises`),
+        ]);
+
+        if (patientRes.ok) setPatient(await patientRes.json());
+        if (recordsRes.ok) setTrackRecords(await recordsRes.json());
+        if (assessRes.ok) setAssessments(await assessRes.json());
+        if (exRes.ok) setExercises(await exRes.json());
+      } catch (error) {
+        console.error("Error fetching data from backend", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   const tabs = [
-    { id: 'trackRecord', label: 'Track Record & Progress', icon: ActivitySquare },
-    { id: 'assessments', label: 'Initial Assessments', icon: ClipboardList },
-    { id: 'exercises', label: 'Prescribed Exercises', icon: Video },
-    { id: 'consent', label: 'Consent Undertaking', icon: PenTool },
+    { id: 'trackRecord', label: 'History', icon: Activity },
+    { id: 'assessments', label: 'Assessments', icon: ClipboardList },
+    { id: 'exercises', label: 'Exercises', icon: Video },
+    { id: 'consent', label: 'Consent', icon: PenTool },
   ];
 
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-white">
+        <div className="flex flex-col items-center gap-4">
+          <Activity className="w-12 h-12 text-primary animate-pulse" />
+          <span className="font-black text-primary tracking-widest text-xs uppercase">Loading Dashboard...</span>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="py-24 px-6 max-w-7xl mx-auto min-h-screen">
-      <div className="mb-12">
-        <h1 className="text-3xl font-bold text-slate-900 mb-2">Patient Portal</h1>
-        <p className="text-slate-500">Welcome back, John Doe. Here is your recovery dashboard.</p>
+    <div className="bg-slate-50 min-h-screen pb-24">
+      {/* Dashboard Top Header */}
+      <div className="bg-primary text-white py-12 px-6">
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-start md:items-center gap-8">
+          <div className="flex items-center gap-6">
+             <div className="w-20 h-20 rounded-3xl bg-accent flex items-center justify-center border-4 border-white/10 overflow-hidden">
+               <img src="https://images.unsplash.com/photo-1537368910025-700350fe46c7?q=80&w=2070" className="w-full h-full object-cover" />
+             </div>
+             <div>
+               <h1 className="text-3xl font-extrabold mb-1">{patient?.name || 'Mark Sullivan'}</h1>
+               <div className="flex flex-wrap gap-4 text-emerald-50/60 text-xs font-bold uppercase tracking-widest">
+                 <span className="flex items-center gap-1"><User className="w-3 h-3 text-accent" /> Patient ID: #{patient?.id || '001'}</span>
+                 <span className="flex items-center gap-1"><MapPin className="w-3 h-3 text-accent" /> {patient?.address || 'Wellness City'}</span>
+               </div>
+             </div>
+          </div>
+          <div className="flex gap-4">
+             <button className="p-3 rounded-2xl bg-white/10 hover:bg-white/20 transition-all relative">
+               <Bell className="w-6 h-6" />
+               <span className="absolute top-2 right-2 w-2 h-2 bg-accent rounded-full border-2 border-primary"></span>
+             </button>
+             <button className="px-6 py-3 bg-accent text-primary font-bold rounded-2xl hover:bg-white transition-all text-sm uppercase tracking-widest">
+               UPDATE PROFILE
+             </button>
+          </div>
+        </div>
       </div>
 
-      <div className="flex flex-col md:flex-row gap-8">
-        {/* Sidebar Navigation */}
-        <div className="w-full md:w-64 shrink-0">
-          <div className="bg-white rounded-2xl p-4 shadow-sm border border-slate-200 sticky top-28">
+      <div className="max-w-7xl mx-auto px-6 -mt-8 grid lg:grid-cols-4 gap-8">
+        {/* Navigation Sidebar */}
+        <div className="lg:col-span-1">
+          <div className="bg-white rounded-[2.5rem] p-6 shadow-xl border border-slate-100 sticky top-32">
             <nav className="space-y-2">
               {tabs.map((tab) => (
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all ${
+                  className={`w-full flex items-center gap-4 px-6 py-4 rounded-2xl text-xs font-black transition-all uppercase tracking-widest ${
                     activeTab === tab.id 
-                      ? 'bg-cyan-50 text-cyan-700' 
-                      : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
+                      ? 'bg-primary text-white shadow-lg' 
+                      : 'text-slate-400 hover:bg-slate-50 hover:text-primary'
                   }`}
                 >
-                  <tab.icon className={`w-5 h-5 ${activeTab === tab.id ? 'text-cyan-600' : 'text-slate-400'}`} />
+                  <tab.icon className={`w-5 h-5 ${activeTab === tab.id ? 'text-accent' : ''}`} />
                   {tab.label}
                 </button>
               ))}
@@ -43,8 +108,12 @@ const PatientPortal: React.FC = () => {
         </div>
 
         {/* Content Area */}
-        <div className="flex-grow">
-          <div className="bg-white rounded-3xl p-8 min-h-[600px] shadow-lg shadow-slate-200/50 border border-slate-100">
+        <div className="lg:col-span-3">
+          <div className="bg-white rounded-[3rem] p-8 md:p-12 min-h-[600px] shadow-2xl border border-slate-100 overflow-hidden relative">
+            <div className="absolute top-0 right-0 p-8 opacity-5">
+               <Activity className="w-40 h-40" />
+            </div>
+
             <AnimatePresence mode="wait">
               {activeTab === 'trackRecord' && (
                 <motion.div
@@ -53,34 +122,26 @@ const PatientPortal: React.FC = () => {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
                 >
-                  <h2 className="text-2xl font-bold text-slate-800 mb-6">Track Record & Remarks</h2>
-                  <div className="space-y-8 relative before:absolute before:inset-0 before:ml-5 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-transparent before:via-slate-200 before:to-transparent">
-                    {/* Timeline Item 1 */}
-                    <div className="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active">
-                      <div className="flex items-center justify-center w-10 h-10 rounded-full border-4 border-white bg-cyan-100 text-cyan-600 shadow shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 z-10">
-                        <CheckCircle className="w-4 h-4" />
-                      </div>
-                      <div className="w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)] p-4 rounded-xl border border-slate-200 bg-slate-50 shadow-sm">
-                        <div className="flex items-center justify-between mb-2">
-                          <span className="font-bold text-slate-800">Session 3</span>
-                          <time className="text-xs font-semibold text-cyan-600">May 1, 2026</time>
+                  <h2 className="text-2xl font-black text-primary mb-12 uppercase tracking-widest border-b border-slate-50 pb-6">Recovery Timeline</h2>
+                  <div className="space-y-8 relative before:absolute before:inset-0 before:ml-5 before:h-full before:w-0.5 before:bg-slate-100">
+                    {trackRecords.map((record, index) => (
+                      <div key={record.id} className="relative flex items-center gap-8 group">
+                        <div className={`flex items-center justify-center w-10 h-10 rounded-2xl border-4 border-white ${index === 0 ? 'bg-primary text-accent' : 'bg-slate-100 text-slate-400'} shadow-lg z-10 shrink-0`}>
+                          {index === 0 ? <CheckCircle className="w-4 h-4" /> : <div className="w-2 h-2 rounded-full bg-slate-400"></div>}
                         </div>
-                        <p className="text-sm text-slate-600">Patient reported 40% reduction in lower back pain. Mobility in lumbar spine has improved. Continued manual therapy and introduced core stabilization exercises.</p>
-                      </div>
-                    </div>
-                    {/* Timeline Item 2 */}
-                    <div className="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group">
-                      <div className="flex items-center justify-center w-10 h-10 rounded-full border-4 border-white bg-slate-100 text-slate-400 shadow shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 z-10">
-                        <div className="w-2 h-2 rounded-full bg-slate-400"></div>
-                      </div>
-                      <div className="w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)] p-4 rounded-xl border border-slate-200 bg-white shadow-sm">
-                        <div className="flex items-center justify-between mb-2">
-                          <span className="font-bold text-slate-800">Session 2</span>
-                          <time className="text-xs text-slate-500">Apr 24, 2026</time>
+                        <div className="flex-grow bg-slate-50 rounded-[2rem] p-8 hover:bg-white hover:shadow-xl transition-all border border-transparent hover:border-slate-100">
+                          <div className="flex justify-between items-start mb-4">
+                             <div>
+                               <h3 className="font-black text-primary uppercase tracking-wide text-lg">{record.sessionTitle}</h3>
+                               <p className="text-[10px] font-bold text-accent uppercase tracking-[0.2em]">{new Date(record.sessionDate).toLocaleDateString()}</p>
+                             </div>
+                             <div className="px-3 py-1 bg-white rounded-lg text-[10px] font-black text-primary shadow-sm border border-slate-50">SESSION #{trackRecords.length - index}</div>
+                          </div>
+                          <p className="text-sm text-slate-500 font-medium leading-relaxed italic">"{record.remarks}"</p>
                         </div>
-                        <p className="text-sm text-slate-600">Focus on myofascial release. Tolerated treatment well. Mild soreness post-treatment as expected.</p>
                       </div>
-                    </div>
+                    ))}
+                    {trackRecords.length === 0 && <p className="text-center text-slate-400 font-bold uppercase tracking-widest py-20">No history found.</p>}
                   </div>
                 </motion.div>
               )}
@@ -92,34 +153,35 @@ const PatientPortal: React.FC = () => {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
                 >
-                  <h2 className="text-2xl font-bold text-slate-800 mb-6">Initial Assessment</h2>
-                  <div className="bg-slate-50 border border-slate-200 rounded-2xl p-6">
-                    <div className="flex items-center justify-between border-b border-slate-200 pb-4 mb-4">
-                      <div>
-                        <h3 className="font-bold text-slate-800">Physiotherapy Evaluation Report</h3>
-                        <p className="text-sm text-slate-500">Date of Consultation: April 15, 2026</p>
+                  <h2 className="text-2xl font-black text-primary mb-12 uppercase tracking-widest border-b border-slate-50 pb-6">Expert Assessments</h2>
+                  <div className="grid md:grid-cols-2 gap-8">
+                    {assessments.map(assessment => (
+                      <div key={assessment.id} className="bg-slate-50 border border-slate-100 rounded-[2.5rem] p-8 hover:bg-white hover:shadow-2xl transition-all group">
+                        <div className="flex items-start justify-between mb-8">
+                          <div className="w-14 h-14 bg-primary rounded-2xl flex items-center justify-center text-accent">
+                            <ClipboardList className="w-7 h-7" />
+                          </div>
+                          <div className="text-right">
+                             <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Date</div>
+                             <div className="font-bold text-primary">{new Date(assessment.assessmentDate).toLocaleDateString()}</div>
+                          </div>
+                        </div>
+                        <h3 className="font-black text-primary text-xl uppercase tracking-tighter mb-6">{assessment.title}</h3>
+                        <div className="space-y-4">
+                           {[
+                             { label: 'Condition', val: assessment.diagnosis },
+                             { label: 'Treatment', val: assessment.treatmentPlan }
+                           ].map((item, i) => (
+                             <div key={i}>
+                               <span className="text-[10px] font-black text-accent uppercase tracking-widest block mb-1">{item.label}</span>
+                               <p className="text-sm text-slate-600 font-medium line-clamp-2 group-hover:line-clamp-none transition-all">{item.val}</p>
+                             </div>
+                           ))}
+                        </div>
                       </div>
-                      <FileText className="w-8 h-8 text-cyan-600" />
-                    </div>
-                    <div className="space-y-4 text-sm">
-                      <div>
-                        <span className="font-bold text-slate-700 block mb-1">Chief Complaint:</span>
-                        <p className="text-slate-600">Chronic lower back pain radiating to left glute, exacerbated by sitting for prolonged periods.</p>
-                      </div>
-                      <div>
-                        <span className="font-bold text-slate-700 block mb-1">Objective Findings:</span>
-                        <p className="text-slate-600">Decreased lumbar flexion (40 deg). Positive straight leg raise on left at 60 deg. Muscle spasm in left erector spinae.</p>
-                      </div>
-                      <div>
-                        <span className="font-bold text-slate-700 block mb-1">Diagnosis:</span>
-                        <p className="text-slate-600">L4-L5 discogenic pain with mild left-sided sciatica.</p>
-                      </div>
-                      <div>
-                        <span className="font-bold text-slate-700 block mb-1">Treatment Plan:</span>
-                        <p className="text-slate-600">Manual therapy, core strengthening, postural correction. 2 sessions/week for 4 weeks.</p>
-                      </div>
-                    </div>
+                    ))}
                   </div>
+                  {assessments.length === 0 && <p className="text-center text-slate-400 font-bold uppercase tracking-widest py-20">No assessments found.</p>}
                 </motion.div>
               )}
 
@@ -130,30 +192,28 @@ const PatientPortal: React.FC = () => {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
                 >
-                  <div className="flex justify-between items-center mb-6">
-                    <h2 className="text-2xl font-bold text-slate-800">Prescribed Exercises</h2>
-                    <span className="px-3 py-1 bg-emerald-100 text-emerald-700 text-xs font-bold rounded-full">Phase 1: Core Activation</span>
-                  </div>
-                  <div className="grid md:grid-cols-2 gap-6">
-                    {[
-                      { title: 'Pelvic Tilts', reps: '3 sets of 10 reps', freq: 'Daily', img: 'https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?q=80&w=2070&auto=format&fit=crop' },
-                      { title: 'Bird Dog', reps: '3 sets of 8 reps per side', freq: 'Daily', img: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?q=80&w=2020&auto=format&fit=crop' },
-                      { title: 'Cat-Cow Stretch', reps: '2 sets of 15 reps', freq: 'Twice Daily', img: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?q=80&w=1999&auto=format&fit=crop' }
-                    ].map((ex, i) => (
-                      <div key={i} className="border border-slate-200 rounded-xl overflow-hidden group cursor-pointer hover:border-cyan-300 transition-colors">
-                        <div className="aspect-video bg-slate-100 relative">
-                          <img src={ex.img} alt={ex.title} className="w-full h-full object-cover mix-blend-multiply opacity-80" />
-                          <div className="absolute inset-0 flex items-center justify-center">
-                             <div className="w-12 h-12 bg-white/80 backdrop-blur rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
-                               <Video className="w-5 h-5 text-cyan-600 ml-1" />
+                  <h2 className="text-2xl font-black text-primary mb-12 uppercase tracking-widest border-b border-slate-50 pb-6">Recovery Exercises</h2>
+                  <div className="grid md:grid-cols-2 gap-8">
+                    {exercises.map((ex, i) => (
+                      <div key={i} className="group cursor-pointer rounded-[2.5rem] overflow-hidden border border-slate-100 bg-white hover:shadow-2xl transition-all">
+                        <div className="aspect-video relative overflow-hidden">
+                          <img src={ex.imageUrl || 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?q=80&w=1000'} className="w-full h-full object-cover group-hover:scale-110 transition-all duration-700" />
+                          <div className="absolute inset-0 bg-primary/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all">
+                             <div className="w-16 h-16 bg-accent rounded-full flex items-center justify-center text-primary shadow-xl">
+                               <Video className="w-7 h-7 ml-1" />
                              </div>
                           </div>
+                          <div className="absolute top-4 left-4">
+                            <span className="px-3 py-1 bg-white text-primary text-[10px] font-black uppercase tracking-widest rounded-full">{ex.phase || 'RECOVERY'}</span>
+                          </div>
                         </div>
-                        <div className="p-4 bg-white">
-                          <h4 className="font-bold text-slate-800 mb-1">{ex.title}</h4>
-                          <div className="flex justify-between text-xs text-slate-500">
-                            <span>{ex.reps}</span>
-                            <span className="font-semibold text-cyan-600">{ex.freq}</span>
+                        <div className="p-8">
+                          <h4 className="font-black text-primary text-xl mb-4 uppercase tracking-tighter">{ex.title}</h4>
+                          <div className="flex justify-between items-center py-4 border-t border-slate-50">
+                            <div className="flex items-center gap-2 text-slate-400 font-bold text-xs uppercase tracking-widest">
+                               <Calendar className="w-4 h-4 text-accent" /> {ex.frequency}
+                            </div>
+                            <span className="px-3 py-1 bg-emerald-50 text-emerald-700 text-[10px] font-black uppercase tracking-widest rounded-lg">{ex.reps}</span>
                           </div>
                         </div>
                       </div>
@@ -169,24 +229,22 @@ const PatientPortal: React.FC = () => {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
                 >
-                  <h2 className="text-2xl font-bold text-slate-800 mb-6">Consent & Undertaking</h2>
-                  <div className="bg-amber-50 border border-amber-200 p-6 rounded-2xl mb-6">
-                    <h3 className="font-bold text-amber-800 mb-2">Informed Consent for Physiotherapy Treatment</h3>
-                    <p className="text-sm text-amber-700/80 mb-4">Please read the following information carefully before signing.</p>
-                    <div className="h-48 overflow-y-auto bg-white p-4 rounded-lg border border-amber-100 text-sm text-slate-600 mb-4">
-                      <p className="mb-2">1. I hereby consent to the performance of physiotherapy assessments and treatments by the registered physiotherapists at Aarogyam Clinic.</p>
-                      <p className="mb-2">2. I understand that the treatments may include manual therapy, exercise prescription, electrotherapy, and other modalities as deemed necessary.</p>
-                      <p className="mb-2">3. I acknowledge that while physiotherapy is generally safe, there are potential risks, including temporary soreness or exacerbation of symptoms.</p>
-                      <p className="mb-2">4. I have the right to ask questions about my treatment and may withdraw my consent at any time.</p>
+                  <h2 className="text-2xl font-black text-primary mb-12 uppercase tracking-widest border-b border-slate-50 pb-6">Digital Consent</h2>
+                  <div className="bg-slate-50 rounded-[2.5rem] p-10 border border-slate-100">
+                    <h3 className="font-black text-primary uppercase tracking-tight text-xl mb-4">Patient Responsibility Affirmation</h3>
+                    <div className="h-64 overflow-y-auto bg-white p-8 rounded-3xl border border-slate-100 text-sm text-slate-500 font-medium leading-relaxed mb-8 shadow-inner">
+                      <p className="mb-6">I understand that chiropractic care and physical therapy require consistency and commitment. I agree to follow the recovery plan provided by my specialist and to communicate any changes in my condition immediately.</p>
+                      <p className="mb-6">I acknowledge that the healing process varies between individuals and that the duration of treatment is an estimate based on clinical expertise.</p>
+                      <p className="mb-6">I authorize the team at Healex to perform the necessary physical evaluations and treatments as discussed during my initial consultation.</p>
                     </div>
-                    <div className="flex items-center gap-3">
-                      <input type="checkbox" id="consent" className="w-5 h-5 rounded border-amber-300 text-amber-600 focus:ring-amber-500" />
-                      <label htmlFor="consent" className="text-sm font-bold text-amber-900 cursor-pointer">I have read, understood, and agree to the terms above.</label>
+                    <div className="flex items-center gap-4 bg-white p-6 rounded-2xl border border-slate-100 mb-10 shadow-sm">
+                      <input type="checkbox" id="consent" className="w-6 h-6 rounded-lg border-slate-200 text-primary focus:ring-accent" />
+                      <label htmlFor="consent" className="text-xs font-black text-primary uppercase tracking-widest cursor-pointer mt-1">I affirm my commitment to this recovery path.</label>
                     </div>
+                    <button className="btn-primary w-full py-5 text-sm uppercase tracking-[0.2em]">
+                      SIGN & CONFIRM
+                    </button>
                   </div>
-                  <button className="px-6 py-3 bg-slate-900 text-white font-bold rounded-xl hover:bg-cyan-600 transition-colors">
-                    Sign & Submit Consent
-                  </button>
                 </motion.div>
               )}
             </AnimatePresence>
